@@ -22,9 +22,8 @@ const AppContainer = styled.div`
     max-width: 1280px;
     margin: 30px auto;
     font-family: 'Arial', sans-serif;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
 `;
 
 const NavBar = styled.nav`

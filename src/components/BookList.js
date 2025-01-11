@@ -30,7 +30,35 @@ const LoadMoreButton = styled.button`
     }
 `;
 
-const BookList = ({ books, isEnd, loadMore, handleBookClick, onAddToFavorites }) => { // onAddToFavorites prop 받기
+const handleAddToFavorites = async (book) => {
+    // 즐겨찾기 추가 로직 (BookItem.js에서 제거된 부분)
+    try {
+        const response = await fetch("/api/favorites", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                bookId: book.isbn,
+                title: book.title,
+                author: book.authors.join(", "),
+                price: book.price, // 가격 정보 추가
+                thumbnail: book.thumbnail, // 썸네일 정보 추가
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to add to favorites");
+        }
+
+        alert("즐겨찾기에 추가되었습니다!");
+    } catch (error) {
+        console.error("Error adding to favorites:", error);
+        alert("즐겨찾기 추가에 실패했습니다.");
+    }
+};
+
+const BookList = ({ books, isEnd, loadMore, handleBookClick}) => { // onAddToFavorites prop 받기
     return (
         <BookListContainer>
             <BookGrid>
@@ -43,7 +71,7 @@ const BookList = ({ books, isEnd, loadMore, handleBookClick, onAddToFavorites })
                         <BookItem
                             key={book.isbn}
                             book={book}
-                            onAddToFavorites={onAddToFavorites} // onAddToFavorites prop 전달
+                            handleAddToFavorites={handleAddToFavorites} // onAddToFavorites prop 전달
                         />
                     </div>
                 ))}

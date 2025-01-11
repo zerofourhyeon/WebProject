@@ -46,11 +46,13 @@ app.post('/api/favorites', async (req, res) => {
             return res.status(400).json({ error: "도서가 이미 즐겨찾기에 추가되어있습니다." });
         }
 
-        // 존재하지 않는 경우 새로운 즐겨찾기 항목 생성
-        const newFavorite = new Favorite({ bookId, title, author });
+        const newFavorite = new Favorite({
+            bookId,
+            title,
+            author,
+        });
         await newFavorite.save();
         console.log("Favorite added:", newFavorite);
-
         // 응답은 한 번만 보내야 함
         res
             .status(201)
@@ -65,9 +67,21 @@ app.post('/api/favorites', async (req, res) => {
 app.get('/api/favorites', async (req, res) => {
     try {
         const favorites = await Favorite.find();
-        res.json(favorites);
+        // 각 즐겨찾기 항목에 대해 책 정보를 조회하여 추가 (비효율적일 수 있음)
+        const favoritesWithBookInfo = await Promise.all(
+            favorites.map(async (favorite) => {
+                await Book.findOne({ title: favorite.title });
+// 책 정보 조회
+                return {
+                    ...favorite.toObject(),
+                };
+            })
+        );
+
+        res.json(favoritesWithBookInfo);
     } catch (error) {
-        res.status(500).json({ error: '즐겨찾기 도서 조회에 실패하였습니다.' });
+        console.error("Error fetching favorites:", error);
+        res.status(500).json({ error: "즐겨찾기 도서 조회에 실패했습니다." });
     }
 });
 

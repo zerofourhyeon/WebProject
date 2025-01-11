@@ -5,83 +5,98 @@ import { searchBooks } from '../api';
 import styled from 'styled-components';
 
 const BookDetailContainer = styled.div`
-    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center; // 수평 중앙 정렬
+    gap: 50px; // 이미지와 텍스트 사이 간격 조정
+    padding: 30px; // 내부 여백 조정
     font-family: 'Arial', sans-serif;
     color: #333;
-    line-height: 1.6;
-    background-color: #f8f8f8;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 1200px;
-    margin: 0 auto;
+    background-color: #ffffff;
+    max-width: 900px;
+    margin: 30px auto;
 
     @media (max-width: 768px) {
         flex-direction: column;
-        align-items: center;
-    }
-`;
-
-const BookContent = styled.div`
-    display: flex;
-    gap: 30px;
-
-    @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: center;
     }
 `;
 
 const BookCover = styled.img`
     width: 250px;
-    height: 350px;
+    height: auto;
     object-fit: cover;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // 이미지 그림자 효과
 
     @media (max-width: 768px) {
         width: 50%;
-        height: auto;
     }
 `;
 
 const BookInfo = styled.div`
-    flex-grow: 1;
+    width: 50%; // 텍스트 영역 너비 조정
+    display: flex;
+    flex-direction: column;
+    justify-content: center; // 텍스트 수직 중앙 정렬
 `;
 
-const SectionTitle = styled.h3`
-    border-bottom: 3px solid #f0ad4e;
-    padding-bottom: 8px;
+const Title = styled.h2`
     margin-top: 0;
-    font-size: 1.4em;
+    font-size: 1.7em;
+    border-bottom: 3px solid #cb9dd8; // 제목 하단 보라색 밑줄
+    padding-bottom: 10px; // 제목과 내용 사이 여백
+    color: #673ab7; // 제목 보라색
+`;
+
+const InfoItem = styled.p`
+    margin: 5px 0;
+    font-size: 1em;
+`;
+
+const PriceInfo = styled.div`
+    margin-top: 15px;
+`;
+
+const OriginalPrice = styled.span`
+    text-decoration: line-through;
+    color: #999;
+    margin-right: 10px;
+    font-size: 1.1em; // 정가 텍스트 크기 조정
+`;
+
+const SalePrice = styled.span`
+    font-weight: bold;
+    font-size: 1.3em;
     color: #d9534f;
 `;
 
-const DataLabel = styled.dt`
-    font-weight: bold;
-    margin-top: 10px;
-    color: #555;
-`;
-
-const DataValue = styled.dd`
-    margin-left: 0;
-    margin-bottom: 15px;
-    font-size: 1.1em;
+const DiscountRate = styled.span`
+    color: #d9534f;
+    margin-left: 10px;
+    font-size: 1.1em; // 할인율 텍스트 크기 조정
 `;
 
 const UrlButton = styled.a`
     display: inline-block;
-    background-color: #4285f4;
+    background-color: #b29dd8; // 버튼 보라색 (진한 보라색)
+    // background-color: #9575cd; // 버튼 보라색 (연한 보라색)
     color: white;
-    padding: 8px 16px;
-    margin-top: 10px;
+    padding: 10px 20px; // 버튼 크기 조정
     border-radius: 5px;
     text-decoration: none;
-    font-size: 1em;
+    font-size: 1.1em; // 버튼 텍스트 크기 조정
     transition: background-color 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // 버튼 그림자 효과
 
     &:hover {
-        background-color: #3367d6;
+        background-color: #5e35b1; // 버튼 호버 효과 (진한 보라색)
+        // background-color: #7e57c2; // 버튼 호버 효과 (연한 보라색)
     }
+`;
+
+const ButtonContainer = styled.div`
+    text-align: left;
+    margin-top: 20px; // 버튼 위쪽 여백 조정
 `;
 
 const BookDetail = () => {
@@ -113,45 +128,28 @@ const BookDetail = () => {
 
     return (
         <BookDetailContainer>
-            <h2>{book.title}</h2>
-            <BookContent>
-                <BookCover src={book.thumbnail} alt={book.title} />
-                <BookInfo>
-                    <SectionTitle>기본 정보</SectionTitle>
-                    <dl>
-                        <DataLabel>ISBN</DataLabel>
-                        <DataValue>{book.isbn}</DataValue>
-
-                        <DataLabel>저자</DataLabel>
-                        <DataValue>{book.authors.join(', ')}</DataValue>
-
-                        <DataLabel>출판사</DataLabel>
-                        <DataValue>{book.publisher}</DataValue>
-
-                        <DataLabel>출판일</DataLabel>
-                        <DataValue>{new Date(book.datetime).toLocaleDateString()}</DataValue>
-
-                        <DataLabel>번역자</DataLabel>
-                        <DataValue>{book.translators.length > 0 ? book.translators.join(', ') : '없음'}</DataValue>
-
-                        <DataLabel>정가</DataLabel>
-                        <DataValue>{book.price}원</DataValue>
-
-                        <DataLabel>판매가</DataLabel>
-                        <DataValue>{book.sale_price}원</DataValue>
-
-                        <DataLabel>판매 상태</DataLabel>
-                        <DataValue>{book.status}</DataValue>
-
-                        <DataLabel>URL</DataLabel>
-                        <DataValue>
-                            <UrlButton href={book.url} target="_blank" rel="noopener noreferrer">
-                                도서 URL
-                            </UrlButton>
-                        </DataValue>
-                    </dl>
-                </BookInfo>
-            </BookContent>
+            <BookCover src={book.thumbnail} alt={book.title} />
+            <BookInfo>
+                <Title>{book.title}</Title>
+                <InfoItem>저자: {book.authors.join(', ')}</InfoItem>
+                <InfoItem>출판사: {book.publisher}</InfoItem>
+                <InfoItem>출판일: {new Date(book.datetime).toLocaleDateString()}</InfoItem>
+                <InfoItem>
+                    번역자: {book.translators.length > 0 ? book.translators.join(', ') : '없음'}
+                </InfoItem>
+                <PriceInfo>
+                    <OriginalPrice>{book.price}원</OriginalPrice>
+                    <SalePrice>{book.sale_price}원</SalePrice>
+                    <DiscountRate>
+                        ({Math.round((1 - book.sale_price / book.price) * 100)}%)
+                    </DiscountRate>
+                </PriceInfo>
+                <ButtonContainer>
+                    <UrlButton href={book.url} target="_blank" rel="noopener noreferrer">
+                        바로가기
+                    </UrlButton>
+                </ButtonContainer>
+            </BookInfo>
         </BookDetailContainer>
     );
 };
